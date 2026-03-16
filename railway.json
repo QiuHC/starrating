@@ -3,9 +3,15 @@
   "build": {
     "builder": "NIXPACKS"
   },
+  "phases": {
+    "setup": {
+      "nixPkgs": ["jdk11", "maven"]
+    },
+    "build": {
+      "cmds": ["cd starrating-backend && mvn clean install -DskipTests"]
+    }
+  },
   "deploy": {
-    "root": "starrating-backend",
-    "buildCommand": "mvn clean install -DskipTests",
-    "startCommand": "java -jar target/*.jar --server.port=$PORT"
+    "startCommand": "java -jar starrating-backend/target/*.jar --server.port=$PORT"
   }
 }
