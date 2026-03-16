@@ -1,0 +1,33 @@
+# Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+gen/
+.idea_modules/
+
+# VS Code
+.vscode/
+
+# Node.js
+node_modules/
+dist/
+build/
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+tmp/
+.gemini/
+starrating-backend/src/main/resources/schema.sql

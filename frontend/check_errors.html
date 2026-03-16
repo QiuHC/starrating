@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://unpkg.com/element-plus"></script>
+  <script src="https://unpkg.com/element-plus/dist/locale/zh-cn.min.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    console.log("Vue is loaded?", typeof Vue !== 'undefined');
+    console.log("ElementPlus is loaded?", typeof ElementPlus !== 'undefined');
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      document.body.innerHTML += '<p>Error: ' + msg + ' at line ' + lineNo + '</p>';
+      return false;
+    };
+  </script>
+  <script src="./components/RegistrationForm.js"></script>
+  <script src="./components/AdminReview.js"></script>
+  <script src="./components/AdminExport.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

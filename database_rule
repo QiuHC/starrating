@@ -1,0 +1,60 @@
+星评数据库数据字典 (v1.0)
+
+星评数据库数据字典 （v1.0）
+数据库名称： star_rating
+字符集： utf8mb4 (支持生僻字)
+设计说明：
+1.无物理外键：表间逻辑关联主要通过 shop_code（服务店编码）实现。
+2.布尔值约定：所有“是否”类字段采用 VARCHAR(10)，建议存入字符串：'是' / '否'。
+3.公共字段：每张表均包含 id (自增主键)、created_at (创建时间)、updated_at (自动更新时间)。
+
+1. 星评人员信息表 (star_rating_personnel)
+ 用途：记录参与星级评定的相关人员详细档案。
+字段名	类型	必须	备注
+id	BIGINT UNSIGNED	是	自增主键
+shop_code	VARCHAR(50)	是	服务店编码 (索引)
+shop_name	VARCHAR(100)	是	服务店名称
+name	VARCHAR(50)	是	姓名 (索引)
+gender	VARCHAR(10)	否	性别 (如：男、女)
+center	VARCHAR(100)	否	中心
+department	VARCHAR(100)	否	部门
+position	VARCHAR(100)	否	岗位
+historical_work_place	VARCHAR(255)	否	一线历史工作地
+historical_star_shops	TEXT	否	历史星评服务店 (多条记录建议逗号隔开)
+created_at	DATETIME	是	系统记录创建时间
+updated_at	DATETIME	是	系统记录最后修改时间
+
+2. 服务店报名表 (station_registration)
+用途：记录服务店申请星级评定的报名信息及审核初判。
+字段名	类型	必须	备注
+id	BIGINT UNSIGNED	是	自增主键
+network_type	VARCHAR(50)	否	网路
+shop_code	VARCHAR(50)	是	服务店编码 (索引)
+shop_name	VARCHAR(100)	是	服务店名称
+service_center	VARCHAR(100)	否	服务中心
+region_large	VARCHAR(50)	否	大区 (索引组合)
+region_area	VARCHAR(50)	否	区域 (索引组合)
+
+
+后端开发注意事项：
+1.时间处理：created_at 和 updated_at 由数据库层自动维护，后端插入数据时可忽略这两个字段。
+2.索引优化：主要业务查询应尽量基于 shop_code 展开，这是最快的关联路径。
+3.数据一致性：由于没有物理外键，更新服务店名称时，建议在程序逻辑中同步更新关联表中的 shop_name（或定期校对）。
+三、MySQL_DLL（v1.0）
+use star_rating;
+CREATE TABLE `star_rating_personnel` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shop_code` VARCHAR(50) NOT NULL COMMENT '服务店编码',
+    `shop_name` VARCHAR(100) NOT NULL COMMENT '服务店名称',
+    `name` VARCHAR(50) NOT NULL COMMENT '姓名',
+    `gender` VARCHAR(10) COMMENT '性别 (如：男、女)',
+    `center` VARCHAR(100) COMMENT '中心',
+    `department` VARCHAR(100) COMMENT '部门',
+    `position` VARCHAR(100) COMMENT '岗位',
+    `historical_work_place` VARCHAR(255) COMMENT '一线历史工作地',
+    `historical_star_shops` TEXT COMMENT '历史星评服务店',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX `idx_shop_code` (`shop_code`),
+    INDEX `idx_name` (`name`)
+) ENGINE=InnoDB DEFAULT 
