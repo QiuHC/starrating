@@ -188,6 +188,11 @@ const handleLogout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('role');
   localStorage.removeItem('shopCode');
+  localStorage.removeItem('shopName');
+  localStorage.removeItem('userType');
+  localStorage.removeItem('displayName');
+  localStorage.removeItem('permissionCodes');
+  localStorage.removeItem('roleCodes');
   ElMessage.info('已安全退出登录');
 };
 

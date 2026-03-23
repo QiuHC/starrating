@@ -60,8 +60,9 @@
             <el-form-item label="服务店代码 (Shop Code)" prop="shopCode">
               <el-input 
                 v-model="formData.shopCode" 
-                placeholder="请输入您的服务店唯一代码" 
+                :placeholder="isShopAccount ? '当前账号已绑定服务店代码' : '请输入您的服务店唯一代码'"
                 clearable
+                :disabled="isShopAccount"
                 @blur="checkExistingRegistration"
               >
               </el-input>
@@ -153,6 +154,9 @@ const emit = defineEmits(['submit-registration']);
 
 const formRef = ref(null);
 const existingRegistration = ref(null);
+const isShopAccount = computed(() => (localStorage.getItem('role') || '').toUpperCase() === 'SHOP');
+const currentShopCode = computed(() => localStorage.getItem('shopCode') || '');
+const currentShopName = computed(() => localStorage.getItem('shopName') || localStorage.getItem('displayName') || '');
 
 const formData = reactive({
   shopCode: '',
@@ -192,13 +196,15 @@ const checkExistingRegistration = () => {
   const exist = props.registrations.find(r => r.shopCode === formData.shopCode);
   if (exist) {
     existingRegistration.value = exist;
-    // 如果存在历史，将内容填充（除了状态由父组件管）
     formData.shopName = exist.shopName;
     formData.targetStar = exist.targetStar;
     formData.paymentUrl = exist.paymentUrl;
     formData.canopyUrl = exist.canopyUrl;
   } else {
     existingRegistration.value = null;
+    if (isShopAccount.value) {
+      formData.shopName = currentShopName.value;
+    }
   }
 };
 
@@ -216,7 +222,6 @@ const submitForm = () => {
   formRef.value.validate((valid) => {
     if (valid) {
       emit('submit-registration', { ...formData });
-      resetForm();
     } else {
       return false;
     }
@@ -230,5 +235,33 @@ const resetForm = () => {
   formData.paymentUrl = '';
   formData.canopyUrl = '';
   existingRegistration.value = null;
+  if (isShopAccount.value) {
+    formData.shopCode = currentShopCode.value;
+    formData.shopName = currentShopName.value;
+    checkExistingRegistration();
+  }
 };
+
+const initShopSession = () => {
+  if (!isShopAccount.value) {
+    return;
+  }
+  formData.shopCode = currentShopCode.value;
+  formData.shopName = currentShopName.value;
+  checkExistingRegistration();
+};
+
+watch(
+  () => props.registrations,
+  () => {
+    if (isShopAccount.value) {
+      initShopSession();
+    }
+  },
+  { deep: true }
+);
+
+onMounted(() => {
+  initShopSession();
+});
 </script>

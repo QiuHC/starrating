@@ -24,7 +24,7 @@
             <el-icon><Setting /></el-icon>
             <span>全局配置管理</span>
           </template>
-          <el-menu-item index="1-1" disabled>基础权限与账号配置</el-menu-item>
+          <el-menu-item index="1-1">账号与权限管理</el-menu-item>
           <el-menu-item index="1-2" disabled>评定周期与标准导入</el-menu-item>
           <el-menu-item index="1-3" disabled>评定标准智能体配置</el-menu-item>
         </el-sub-menu>
@@ -129,6 +129,10 @@
             @approve="val => emit('approve', val)" 
             @reject="val => emit('reject', val)" 
           />
+        </div>
+
+        <div v-else-if="activeMenu === '1-1'" class="content-wrapper">
+          <AccountAccessManager />
         </div>
 
         <div v-else class="placeholder-wrapper">
@@ -237,6 +241,7 @@ import {
   Setting, Document, User, Monitor, Position, ChatLineSquare, DataBoard, PieChart
 } from '@element-plus/icons-vue';
 import AdminReview from './AdminReview.vue';
+import AccountAccessManager from './AccountAccessManager.vue';
 
 const props = defineProps({
   registrations: Array
@@ -249,7 +254,7 @@ const emit = defineEmits([
   'logout'
 ]);
 
-const activeMenu = ref('2-1');
+const activeMenu = ref('1-1');
 const registrationPeriod = ref([]); // [startTime, endTime]
 
 const handlePeriodChange = (val) => {
@@ -263,6 +268,7 @@ const handleSelect = (key) => {
 };
 
 const currentBreadcrumb = computed(() => {
+  if (activeMenu.value === '1-1') return '全局配置管理 / 账号与权限管理';
   if (activeMenu.value === '2-1') return '申报管理 / 服务店申报管理';
   return '功能建设中';
 });

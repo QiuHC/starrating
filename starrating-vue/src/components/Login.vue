@@ -89,6 +89,11 @@ const handleLogin = async () => {
         if (res.token) {
           localStorage.setItem('token', res.token);
           localStorage.setItem('role', res.role);
+          localStorage.setItem('userType', res.userType || '');
+          localStorage.setItem('displayName', res.displayName || '');
+          localStorage.setItem('shopName', res.shopName || '');
+          localStorage.setItem('permissionCodes', JSON.stringify(res.permissionCodes || []));
+          localStorage.setItem('roleCodes', JSON.stringify(res.roleCodes || []));
           if (res.shopCode) {
             localStorage.setItem('shopCode', res.shopCode);
           }

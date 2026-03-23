@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const request = axios.create({
-  baseURL: 'http://localhost:8080/api', // 指向 Spring Boot 后端
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081/api',
   timeout: 10000,
 });
 

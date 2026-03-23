@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.starrating.entity.SysConfig;
 import com.starrating.service.SysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -26,6 +27,7 @@ public class SysConfigController {
 
     // 更新报名周期设置
     @PostMapping("/period")
+    @PreAuthorize("hasAuthority('config_manage')")
     public String updatePeriod(@RequestBody Map<String, String> period) {
         // period payload: { "startTime": "...", "endTime": "..." }
         String jsonValue = String.format("{\"startTime\": \"%s\", \"endTime\": \"%s\"}", 

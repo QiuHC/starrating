@@ -1,26 +1,21 @@
 server:
-  port: 8080
+  port: ${PORT:8081}
 
 spring:
   application:
     name: starrating-backend
   datasource:
-    url: jdbc:postgresql://db.crdpbkotuvgthudsmlbv.supabase.co:6543/postgres?sslmode=require
-    username: postgres
-    password: jiushiqiu13
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      minimum-idle: 1
-      maximum-pool-size: 5
-      idle-timeout: 30000
-      max-lifetime: 1800000
-      connection-timeout: 30000
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema.sql
+    url: ${SPRING_DATASOURCE_URL:${DATABASE_URL:}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USERNAME:}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD:}}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:/mapper/**/*.xml
   type-aliases-package: com.starrating.entity
+
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:starrating_secret_key_fixed_length_string_for_demo}
+    expiration-ms: ${APP_JWT_EXPIRATION_MS:3600000}

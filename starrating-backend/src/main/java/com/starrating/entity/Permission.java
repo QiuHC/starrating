@@ -4,21 +4,18 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
 import java.time.OffsetDateTime;
 
 @Data
-@TableName("sys_user")
-public class User {
+@TableName("sys_permission")
+public class Permission {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private String username;
-    private String password;
-    private String email;
-    private String displayName;
-    private String userType; // FACTORY, SHOP
-    private String status; // ACTIVE, DISABLED
-    private String shopCode;
-    private String shopName;
+    private String permissionCode;
+    private String permissionName;
+    private String permissionGroup;
+    private String permissionScope;
     private OffsetDateTime createTime;
     private OffsetDateTime updateTime;
 }

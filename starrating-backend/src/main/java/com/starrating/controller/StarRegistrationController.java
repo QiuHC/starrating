@@ -3,7 +3,11 @@ package com.starrating.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.starrating.entity.StarRegistration;
 import com.starrating.service.StarRegistrationService;
+import com.starrating.service.UserService;
+import com.starrating.security.SecurityPrincipal;
+import com.starrating.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -18,9 +22,20 @@ public class StarRegistrationController {
     @Autowired
     private StarRegistrationService starRegistrationService;
 
+    @Autowired
+    private UserService userService;
+
     // 提交报名申请
     @PostMapping("/submit")
     public String submit(@RequestBody StarRegistration registration) {
+        SecurityPrincipal principal = SecurityUtils.currentPrincipal();
+        if (principal != null && "SHOP".equals(principal.getUserType())) {
+            registration.setShopCode(principal.getShopCode());
+            registration.setUserId(principal.getUserId());
+            if (registration.getShopName() == null || registration.getShopName().isBlank()) {
+                registration.setShopName(userService.getById(principal.getUserId()).getShopName());
+            }
+        }
         registration.setStatus("PENDING");
         registration.setSubmitTime(OffsetDateTime.now());
         registration.setCreateTime(OffsetDateTime.now());
@@ -33,6 +48,10 @@ public class StarRegistrationController {
     @GetMapping("/list")
     public List<StarRegistration> list(@RequestParam(required = false) String shopCode) {
         QueryWrapper<StarRegistration> queryWrapper = new QueryWrapper<>();
+        SecurityPrincipal principal = SecurityUtils.currentPrincipal();
+        if (principal != null && "SHOP".equals(principal.getUserType())) {
+            shopCode = principal.getShopCode();
+        }
         if (shopCode != null && !shopCode.isEmpty()) {
             queryWrapper.eq("shop_code", shopCode);
         }
@@ -42,6 +61,7 @@ public class StarRegistrationController {
 
     // 审核通过
     @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAuthority('registration_manage')")
     public String approve(@PathVariable Long id) {
         StarRegistration reg = starRegistrationService.getById(id);
         if (reg != null) {
@@ -56,6 +76,7 @@ public class StarRegistrationController {
 
     // 审核驳回
     @PostMapping("/{id}/reject")
+    @PreAuthorize("hasAuthority('registration_manage')")
     public String reject(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         StarRegistration reg = starRegistrationService.getById(id);
         if (reg != null) {
